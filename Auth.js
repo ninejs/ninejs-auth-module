@@ -1,30 +1,61 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, Promise, generator) {
-    return new Promise(function (resolve, reject) {
-        generator = generator.call(thisArg, _arguments);
-        function cast(value) { return value instanceof Promise && value.constructor === Promise ? value : new Promise(function (resolve) { resolve(value); }); }
-        function onfulfill(value) { try { step("next", value); } catch (e) { reject(e); } }
-        function onreject(value) { try { step("throw", value); } catch (e) { reject(e); } }
-        function step(verb, value) {
-            var result = generator[verb](value);
-            result.done ? resolve(result.value) : cast(result.value).then(onfulfill, onreject);
-        }
-        step("next", void 0);
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'ninejs/core/ext/Evented', 'ninejs/core/deferredUtils', 'ninejs/core/objUtils', 'path'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "ninejs/core/ext/Evented", "ninejs/core/deferredUtils", "ninejs/core/objUtils", "path"], factory);
     }
 })(function (require, exports) {
     'use strict';
-    var Evented_1 = require('ninejs/core/ext/Evented');
-    var deferredUtils_1 = require('ninejs/core/deferredUtils');
-    var objUtils_1 = require('ninejs/core/objUtils');
-    var path = require('path');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    const Evented_1 = require("ninejs/core/ext/Evented");
+    const deferredUtils_1 = require("ninejs/core/deferredUtils");
+    const objUtils_1 = require("ninejs/core/objUtils");
+    const path = require("path");
     class Auth {
+        on() {
+            return Evented_1.default.on.apply(this, arguments);
+        }
+        emit(type, data) {
+            return Evented_1.default.emit.apply(this, arguments);
+        }
+        login(username, password, domain, callback) {
+            let dom;
+            if ((typeof (domain) === 'function') && !callback) {
+                callback = domain;
+                dom = null;
+            }
+            else {
+                dom = domain;
+            }
+            return deferredUtils_1.when(this.impl.login(username, password, dom), function (data) {
+                if (callback) {
+                    callback(data);
+                }
+                return data;
+            });
+        }
+        usersByPermission(permissions) {
+            return this.impl.usersByPermission(permissions);
+        }
+        users() {
+            return this.impl.users();
+        }
+        permissions() {
+            return this.impl.permissions();
+        }
+        getUser(username) {
+            return this.impl.getUser(username);
+        }
         constructor(config, ninejs, webserver, impl) {
             this.config = config;
             this.impl = impl;
@@ -108,7 +139,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, Promi
             }));
             server.add(new Endpoint({
                 route: '/service/auth/users', method: 'get', handler: function (req, res) {
-                    return __awaiter(this, void 0, Promise, function* () {
+                    return __awaiter(this, void 0, void 0, function* () {
                         if (req.query.byPermissions) {
                             var permissions = JSON.parse('\"' + req.query.byPermissions + '\"');
                             if (!objUtils_1.isArray(permissions)) {
@@ -126,46 +157,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, Promi
             }));
             server.add(new Endpoint({
                 route: '/service/auth/permissions', method: 'get', handler: function (req, res) {
-                    return __awaiter(this, void 0, Promise, function* () {
+                    return __awaiter(this, void 0, void 0, function* () {
                         var permissions = yield self.permissions();
                         res.end(JSON.stringify(permissions));
                     });
                 }
             }));
-        }
-        on() {
-            return Evented_1.default.on.apply(this, arguments);
-        }
-        emit(type, data) {
-            return Evented_1.default.emit.apply(this, arguments);
-        }
-        login(username, password, domain, callback) {
-            let dom;
-            if ((typeof (domain) === 'function') && !callback) {
-                callback = domain;
-                dom = null;
-            }
-            else {
-                dom = domain;
-            }
-            return deferredUtils_1.when(this.impl.login(username, password, dom), function (data) {
-                if (callback) {
-                    callback(data);
-                }
-                return data;
-            });
-        }
-        usersByPermission(permissions) {
-            return this.impl.usersByPermission(permissions);
-        }
-        users() {
-            return this.impl.users();
-        }
-        permissions() {
-            return this.impl.permissions();
-        }
-        getUser(username) {
-            return this.impl.getUser(username);
         }
     }
     exports.default = Auth;

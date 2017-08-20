@@ -7,6 +7,11 @@ var amdExclude = [
 	'tests/'
 ];
 var amdIgnore = [
+	'9js.config.json',
+	'tsconfig.json',
+	'tsd.json',
+	'ninejs-auth-module/Gruntfile',
+	'ninejs-auth-module/profile.build',
 	'ninejs-auth-module/module',
 	'ninejs-auth-module/Auth'
 ];
@@ -14,7 +19,7 @@ var amdIgnore = [
 var profile = {
 	resourceTags: {
 		ignore: function(filename, mid) {
-			var t = (/node_modules/).test(filename);
+			var t = (/node_modules/).test(mid);
 			if (!t) {
 				var cnt, excluded = !(/\.js(on)?$/).test(filename);
 				for (cnt=0;(cnt < amdIgnore.length) && !excluded; cnt += 1){
@@ -25,10 +30,6 @@ var profile = {
 				t = excluded;
 			}
 
-			if (t) {
-				console.log(filename + ' excluded');
-			}
-		
 			return t;
 		},
 		amd: function (filename/*, mid*/) {

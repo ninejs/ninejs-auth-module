@@ -1,8 +1,7 @@
 'use strict';
 
-import extend from 'ninejs/core/extend'
 import Evented from 'ninejs/core/ext/Evented'
-import { when, PromiseType } from 'ninejs/core/deferredUtils'
+import { when } from 'ninejs/core/deferredUtils'
 import { isArray } from 'ninejs/core/objUtils'
 import { NineJs } from 'ninejs/modules/ninejs-server'
 import { default as WebServer, Request, Response } from 'ninejs/modules/webserver/WebServer'
@@ -17,11 +16,11 @@ export interface LoginResult extends Result {
 	[ name: string ]: any;
 }
 export interface AuthImpl {
-	login (username: string, password: string, domain?: any, callback?: (data: any) => void): PromiseType<any>;
-	usersByPermission (permissions: string[]): PromiseType<any>;
-	users (): PromiseType<any>;
-	permissions (): PromiseType<any>;
-	getUser (username: string) : PromiseType<any>;
+	login (username: string, password: string, domain?: any, callback?: (data: any) => void): Promise<any>;
+	usersByPermission (permissions: string[]): Promise<any>;
+	users (): Promise<any>;
+	permissions (): Promise<any>;
+	getUser (username: string) : Promise<any>;
 }
 
 class Auth implements AuthImpl {
@@ -64,7 +63,7 @@ class Auth implements AuthImpl {
 	constructor (config: any, ninejs: NineJs, webserver: WebServer, impl: AuthImpl) {
 		this.config = config;
 		this.impl = impl;
-		var server = webserver,
+		let server = webserver,
 			Endpoint = server.Endpoint,
 			self = this;
 
@@ -79,7 +78,7 @@ class Auth implements AuthImpl {
 		});
 		server.add(new Endpoint({
 			route: '/service/login', method: 'get', handler: function (req: Request, res: Response) {
-				var session = req.session,
+				let session = req.session,
 					result: LoginResult;
 				res.set('Content-Type', 'application/json');
 				if (session.username) {
@@ -89,7 +88,7 @@ class Auth implements AuthImpl {
 								result: 'success',
 								id: data.username
 							};
-							for (var p in data) {
+							for (let p in data) {
 								if ((p !== 'password') && data.hasOwnProperty(p)) {
 									result[p] = data[p];
 								}
@@ -117,7 +116,7 @@ class Auth implements AuthImpl {
 			route: '/service/login', method: 'post', handler: function (req: Request, res: Response) {
 				res.set('Content-Type', 'application/json');
 				when(self.login(req.body.user, req.body.password, req.body.domain, function (data: LoginResult) {
-					var session = req.session;
+					let session = req.session;
 					if (data.result === 'success') {
 						session.username = req.body.user;
 					}
@@ -133,7 +132,7 @@ class Auth implements AuthImpl {
 		}));
 		server.add(new Endpoint({
 			route: '/service/logout', method: 'get', handler: function (req: Request, res: Response) {
-				var session = req.session,
+				let session = req.session,
 					result: Result;
 				res.set('Content-Type', 'application/json');
 				if (session) {
@@ -150,22 +149,22 @@ class Auth implements AuthImpl {
 		server.add(new Endpoint({
 			route: '/service/auth/users', method: 'get', handler: async function (req: Request, res: Response) {
 				if (req.query.byPermissions) {
-					var permissions = JSON.parse('\"' + req.query.byPermissions + '\"');
+					let permissions = JSON.parse('\"' + req.query.byPermissions + '\"');
 					if (!isArray(permissions)) {
 						permissions = [permissions];
 					}
-					var users = await self.usersByPermission(permissions);
+					let users = await self.usersByPermission(permissions);
 					res.end(JSON.stringify(users));
 				}
 				else {
-					var users = await self.users();
+					let users = await self.users();
 					res.end(JSON.stringify(users));
 				}
 			}
 		}));
 		server.add(new Endpoint({
 			route: '/service/auth/permissions', method: 'get', handler: async function (req: Request, res: Response) {
-				var permissions = await self.permissions();
+				let permissions = await self.permissions();
 				res.end(JSON.stringify(permissions));
 			}
 		}));

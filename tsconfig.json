@@ -9,15 +9,13 @@
     "isolatedModules": false,
     "declaration": true,
     "moduleResolution": "classic",
-    "noLib": true,
+    "noLib": false,
     "noEmitOnError": false
   },
   "exclude": [
     "node_modules"
   ],
   "files": [
-    "typings/tsd.d.ts",
-
     "./module.ts",
     "./Auth.ts"
   ]
