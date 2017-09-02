@@ -1,5 +1,6 @@
 import { NineJs } from 'ninejs/modules/ninejs-server';
 import { default as WebServer } from 'ninejs/modules/webserver/WebServer';
+import { AuthConfig } from "./index";
 export interface Result {
     result: string;
 }
@@ -17,7 +18,7 @@ export interface AuthImpl {
 declare class Auth implements AuthImpl {
     on(): any;
     emit(type: string, data: any): any;
-    config: any;
+    config: AuthConfig;
     impl: AuthImpl;
     login(username: string, password: string, domain?: any, callback?: (data: any) => void): Promise<any>;
     usersByPermission(permissions: string[]): Promise<any>;

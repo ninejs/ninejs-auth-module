@@ -59,19 +59,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         constructor(config, ninejs, webserver, impl) {
             this.config = config;
             this.impl = impl;
-            var server = webserver, Endpoint = server.Endpoint, self = this;
+            let server = webserver, Endpoint = server.Endpoint, self = this, clientPrefix = this.config.clientPrefix || '', routePrefix = this.config.routePrefix || '', loginRoute = this.config.loginRoute || '/service/login', logoutRoute = this.config.logoutRoute || 'service/logout', usersRoute = this.config.usersRoute || '/service/auth/users', permissionsRoute = this.config.permissionsRoute || '/service/auth/permissions';
             server.clientSetup(function (utils) {
                 utils.addAmdPath('ninejs-auth-module/client', path.resolve(__dirname, 'client'));
                 utils.addModule('ninejs-auth-module/client/module', {
                     'ninejs/auth': {
-                        loginUrl: '/service/login',
-                        logoutUrl: '/service/logout'
+                        loginUrl: clientPrefix + routePrefix + loginRoute,
+                        logoutUrl: clientPrefix + routePrefix + logoutRoute
                     }
                 });
             });
             server.add(new Endpoint({
-                route: '/service/login', method: 'get', handler: function (req, res) {
-                    var session = req.session, result;
+                route: routePrefix + loginRoute, method: 'get', handler: function (req, res) {
+                    let session = req.session, result;
                     res.set('Content-Type', 'application/json');
                     if (session.username) {
                         deferredUtils_1.when(self.impl.getUser(session.username), function (data) {
@@ -80,7 +80,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                                     result: 'success',
                                     id: data.username
                                 };
-                                for (var p in data) {
+                                for (let p in data) {
                                     if ((p !== 'password') && data.hasOwnProperty(p)) {
                                         result[p] = data[p];
                                     }
@@ -105,26 +105,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                 }
             }));
             server.add(new Endpoint({
-                route: '/service/login', method: 'post', handler: function (req, res) {
-                    res.set('Content-Type', 'application/json');
-                    deferredUtils_1.when(self.login(req.body.user, req.body.password, req.body.domain, function (data) {
-                        var session = req.session;
+                route: routePrefix + loginRoute, method: 'post', handler: function (req, res) {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        res.set('Content-Type', 'application/json');
+                        let data = yield self.login(req.body.user, req.body.password, req.body.domain);
+                        let session = req.session;
                         if (data.result === 'success') {
                             session.username = req.body.user;
                         }
                         else {
                             session.username = null;
                         }
-                        return data;
-                    }), function (data) {
                         self.emit('login', data);
                         res.end(JSON.stringify(data));
                     });
                 }
             }));
             server.add(new Endpoint({
-                route: '/service/logout', method: 'get', handler: function (req, res) {
-                    var session = req.session, result;
+                route: routePrefix + logoutRoute, method: 'get', handler: function (req, res) {
+                    let session = req.session, result;
                     res.set('Content-Type', 'application/json');
                     if (session) {
                         req.session.destroy();
@@ -138,27 +137,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                 }
             }));
             server.add(new Endpoint({
-                route: '/service/auth/users', method: 'get', handler: function (req, res) {
+                route: routePrefix + usersRoute, method: 'get', handler: function (req, res) {
                     return __awaiter(this, void 0, void 0, function* () {
                         if (req.query.byPermissions) {
-                            var permissions = JSON.parse('\"' + req.query.byPermissions + '\"');
+                            let permissions = JSON.parse('\"' + req.query.byPermissions + '\"');
                             if (!objUtils_1.isArray(permissions)) {
                                 permissions = [permissions];
                             }
-                            var users = yield self.usersByPermission(permissions);
+                            let users = yield self.usersByPermission(permissions);
                             res.end(JSON.stringify(users));
                         }
                         else {
-                            var users = yield self.users();
+                            let users = yield self.users();
                             res.end(JSON.stringify(users));
                         }
                     });
                 }
             }));
             server.add(new Endpoint({
-                route: '/service/auth/permissions', method: 'get', handler: function (req, res) {
+                route: routePrefix + permissionsRoute, method: 'get', handler: function (req, res) {
                     return __awaiter(this, void 0, void 0, function* () {
-                        var permissions = yield self.permissions();
+                        let permissions = yield self.permissions();
                         res.end(JSON.stringify(permissions));
                     });
                 }

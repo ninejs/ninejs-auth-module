@@ -4,26 +4,24 @@
   "version": "0.0.2",
   "author": "Eduardo Burgos <eburgos@gmail.com>",
   "repository": "git://github.com/ninejs/ninejs-auth-module",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
+    "grunt-exec": "^3.0.0",
     "grunt-globaltsd": "git+https://github.com/eburgos/grunt-globaltsd.git#master",
-    "grunt-ts": "^5.2.0",
     "kew": "^0.7.0",
     "load-grunt-tasks": "^3.3.0",
-    "ninejs": "^0.2.2",
+    "ninejs": "^0.2.11",
     "tsd": "^0.6.3",
     "typedoc": "ninejs/typedoc",
     "typescript": "git+https://github.com/Microsoft/typescript.git#dac1874c38c29352142757d14b06221af7590293"
   },
   "main": "./module.js",
   "dojoBuild": "profile.build.js",
-  "typings": "Auth.d.ts",
+  "typings": "index.ts",
   "component": {
     "scripts": {}
   },
-  "scripts": {
-  },
+  "scripts": {},
   "contributors": [
     {
       "name": "Eduardo Burgos",

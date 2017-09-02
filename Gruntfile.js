@@ -20,19 +20,9 @@ function exports(grunt) {
 				compress: true
 			}
 		},
-		ts: {
-			default : {
-				tsconfig: './tsconfig.json',
-				options: {
-					"compiler": "./node_modules/typescript/bin/tsc"
-				}
-			},
-			clientSide: {
-				tsconfig: './client/tsconfig.json',
-				options: {
-					"compiler": "./node_modules/typescript/bin/tsc"
-				}
-			}
+		exec: {
+			clientSideTs: (process.env.TS_COMPILER || "./node_modules/typescript/bin/tsc") + " -p ./client/tsconfig.json",
+			defaultTs : (process.env.TS_COMPILER || "./node_modules/typescript/bin/tsc") + " -p ./tsconfig.json",
 		},
 		tsd: {
 
@@ -88,7 +78,7 @@ function exports(grunt) {
 		});
 	});
 	// Default task.
-	grunt.registerTask('default', ['tsd', 'ts']);
+	grunt.registerTask('default', ['exec']);
 
 }
 

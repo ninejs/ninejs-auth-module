@@ -7,6 +7,7 @@ import { NineJs } from 'ninejs/modules/ninejs-server'
 import { default as WebServer, Request, Response } from 'ninejs/modules/webserver/WebServer'
 import ClientUtils from 'ninejs/modules/webserver/ClientUtils'
 import path = require('path')
+import {AuthConfig} from "./index";
 
 export interface Result {
 	result: string;
@@ -30,7 +31,7 @@ class Auth implements AuthImpl {
 	emit (type: string, data: any) {
 		return Evented.emit.apply(this, arguments);
 	}
-	config: any;
+	config: AuthConfig;
 	impl: AuthImpl;
 	login (username: string, password: string, domain?: any, callback?: (data: any) => void) {
 		let dom: string;
@@ -65,19 +66,25 @@ class Auth implements AuthImpl {
 		this.impl = impl;
 		let server = webserver,
 			Endpoint = server.Endpoint,
-			self = this;
+			self = this,
+			clientPrefix = this.config.clientPrefix || '',
+			routePrefix = this.config.routePrefix || '',
+			loginRoute = this.config.loginRoute || '/service/login',
+			logoutRoute = this.config.logoutRoute || 'service/logout',
+			usersRoute = this.config.usersRoute || '/service/auth/users',
+			permissionsRoute = this.config.permissionsRoute || '/service/auth/permissions';
 
 		server.clientSetup(function (utils: ClientUtils) {
 			utils.addAmdPath('ninejs-auth-module/client', path.resolve(__dirname, 'client'));
 			utils.addModule('ninejs-auth-module/client/module', {
 				'ninejs/auth': {
-					loginUrl: '/service/login',
-					logoutUrl: '/service/logout'
+					loginUrl: clientPrefix + routePrefix + loginRoute,
+					logoutUrl: clientPrefix + routePrefix + logoutRoute
 				}
 			});
 		});
 		server.add(new Endpoint({
-			route: '/service/login', method: 'get', handler: function (req: Request, res: Response) {
+			route: routePrefix + loginRoute, method: 'get', handler: function (req: Request, res: Response) {
 				let session = req.session,
 					result: LoginResult;
 				res.set('Content-Type', 'application/json');
@@ -113,25 +120,24 @@ class Auth implements AuthImpl {
 			}
 		}));
 		server.add(new Endpoint({
-			route: '/service/login', method: 'post', handler: function (req: Request, res: Response) {
+			route: routePrefix + loginRoute, method: 'post', handler: async function (req: Request, res: Response) {
 				res.set('Content-Type', 'application/json');
-				when(self.login(req.body.user, req.body.password, req.body.domain, function (data: LoginResult) {
-					let session = req.session;
-					if (data.result === 'success') {
-						session.username = req.body.user;
-					}
-					else {
-						session.username = null;
-					}
-					return data;
-				}), function (data) {
-					self.emit('login', data);
-					res.end(JSON.stringify(data));
-				});
+
+				let data = await self.login(req.body.user, req.body.password, req.body.domain);
+				let session = req.session;
+				if (data.result === 'success') {
+					session.username = req.body.user;
+				}
+				else {
+					session.username = null;
+				}
+
+				self.emit('login', data);
+				res.end(JSON.stringify(data));
 			}
 		}));
 		server.add(new Endpoint({
-			route: '/service/logout', method: 'get', handler: function (req: Request, res: Response) {
+			route: routePrefix + logoutRoute, method: 'get', handler: function (req: Request, res: Response) {
 				let session = req.session,
 					result: Result;
 				res.set('Content-Type', 'application/json');
@@ -147,7 +153,7 @@ class Auth implements AuthImpl {
 			}
 		}));
 		server.add(new Endpoint({
-			route: '/service/auth/users', method: 'get', handler: async function (req: Request, res: Response) {
+			route: routePrefix + usersRoute, method: 'get', handler: async function (req: Request, res: Response) {
 				if (req.query.byPermissions) {
 					let permissions = JSON.parse('\"' + req.query.byPermissions + '\"');
 					if (!isArray(permissions)) {
@@ -163,7 +169,7 @@ class Auth implements AuthImpl {
 			}
 		}));
 		server.add(new Endpoint({
-			route: '/service/auth/permissions', method: 'get', handler: async function (req: Request, res: Response) {
+			route: routePrefix + permissionsRoute, method: 'get', handler: async function (req: Request, res: Response) {
 				let permissions = await self.permissions();
 				res.end(JSON.stringify(permissions));
 			}
