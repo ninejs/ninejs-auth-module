@@ -63,6 +63,7 @@ class LoginScreen extends Widget {
 				return true;
 			}, function (err) {
 				console.log(err);
+				return false;
 			});
 		}
 

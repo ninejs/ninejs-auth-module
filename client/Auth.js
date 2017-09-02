@@ -1,34 +1,40 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'ninejs/core/ext/Properties', 'ninejs/core/deferredUtils', 'ninejs/core/ext/Evented', 'ninejs/request', 'ninejs/core/extend', "./LoginScreen"], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "ninejs/core/ext/Properties", "ninejs/core/deferredUtils", "ninejs/core/ext/Evented", "ninejs/request", "ninejs/core/extend", "./LoginScreen"], factory);
     }
 })(function (require, exports) {
     'use strict';
-    var Properties_1 = require('ninejs/core/ext/Properties');
-    var deferredUtils_1 = require('ninejs/core/deferredUtils');
-    var Evented_1 = require('ninejs/core/ext/Evented');
-    var request_1 = require('ninejs/request');
-    var extend_1 = require('ninejs/core/extend');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Properties_1 = require("ninejs/core/ext/Properties");
+    var deferredUtils_1 = require("ninejs/core/deferredUtils");
+    var Evented_1 = require("ninejs/core/ext/Evented");
+    var request_1 = require("ninejs/request");
+    var extend_1 = require("ninejs/core/extend");
     var LoginScreen_1 = require("./LoginScreen");
     var Auth = (function (_super) {
         __extends(Auth, _super);
         function Auth(config, router, frame) {
-            var _this = this;
-            _super.call(this, {});
-            var loginScreen, self = this;
-            this.config = config;
-            this.data = new Properties_1.default({});
-            this.loginScreen = new LoginScreen_1.default({}, config);
-            this.frame = frame;
-            this.router = router;
+            var _this = _super.call(this, {}) || this;
+            var loginScreen, self = _this;
+            _this.config = config;
+            _this.data = new Properties_1.default({});
+            _this.loginScreen = new LoginScreen_1.default({}, config);
+            _this.frame = frame;
+            _this.router = router;
             router.register('/login', function (e) {
                 _this.enableLoginScreen();
             }, extend_1.default.mixinRecursive({
@@ -45,6 +51,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                     tabKey: 'logout'
                 }
             }, config.logoutRouterArguments || {}));
+            return _this;
         }
         Auth.prototype.on = function (type, listener) {
             return Evented_1.default.on(type, listener);
@@ -201,8 +208,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             });
         };
         return Auth;
-    })(Properties_1.default);
-    Object.defineProperty(exports, "__esModule", { value: true });
+    }(Properties_1.default));
     exports.default = Auth;
 });
 //# sourceMappingURL=Auth.js.map

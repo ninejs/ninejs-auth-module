@@ -2,7 +2,7 @@
 
 import Properties from 'ninejs/core/ext/Properties'
 import { RemovableType } from 'ninejs/core/on'
-import { when, defer, PromiseType } from 'ninejs/core/deferredUtils'
+import { when, defer } from 'ninejs/core/deferredUtils'
 import Evented from 'ninejs/core/ext/Evented'
 import { get } from 'ninejs/request'
 import Frame from 'ninejs/modules/client/FullScreenFrame'

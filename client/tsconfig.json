@@ -5,9 +5,10 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "target": "es2016",
+    "target": "es5",
     "lib": [
-      "es2016",
+      "es6",
+      "es2015.promise",
       "dom"
     ],
     "isolatedModules": false,

@@ -1,33 +1,41 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", "ninejs/core/i18n!./resources/i18n.json", 'ninejs/ui/Widget', './Skin/LoginScreen', 'ninejs/core/on', 'ninejs/core/deferredUtils', 'ninejs/request'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "ninejs/core/i18n!./resources/i18n.json", "ninejs/ui/Widget", "./Skin/LoginScreen", "ninejs/core/on", "ninejs/core/deferredUtils", "ninejs/request"], factory);
     }
 })(function (require, exports) {
     'use strict';
-    var Widget_1 = require('ninejs/ui/Widget');
-    var LoginScreen_1 = require('./Skin/LoginScreen');
-    var on_1 = require('ninejs/core/on');
-    var deferredUtils_1 = require('ninejs/core/deferredUtils');
-    var request_1 = require('ninejs/request');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Widget_1 = require("ninejs/ui/Widget");
+    var LoginScreen_1 = require("./Skin/LoginScreen");
+    var on_1 = require("ninejs/core/on");
+    var deferredUtils_1 = require("ninejs/core/deferredUtils");
+    var request_1 = require("ninejs/request");
     var i18n = require('ninejs/core/i18n!./resources/i18n.json');
     var resources = i18n.getResource();
     var LoginScreen = (function (_super) {
         __extends(LoginScreen, _super);
         function LoginScreen(_0, config) {
-            _super.call(this, _0);
-            var self = this;
-            this.config = config;
+            var _this = _super.call(this, _0) || this;
+            var self = _this;
+            _this.config = config;
             if (self.config.skin && self.config.skin.login) {
                 self.set('skin', self.config.skin.login);
             }
+            return _this;
         }
         LoginScreen.prototype.i18n = function (key) {
             return resources[key];
@@ -69,6 +77,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                     return true;
                 }, function (err) {
                     console.log(err);
+                    return false;
                 });
             }
             this.own(on_1.default(this.loginButton, 'click', performLogin), on_1.default(this, 'performLogin', performLogin));
@@ -80,7 +89,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             }, 0);
         };
         return LoginScreen;
-    })(Widget_1.default);
+    }(Widget_1.default));
     LoginScreen.prototype.skinContract = {
         'validateInput': {
             type: 'function'
@@ -90,7 +99,6 @@ var __extends = (this && this.__extends) || function (d, b) {
         }
     };
     LoginScreen.prototype.skin = LoginScreen_1.default;
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = LoginScreen;
 });
 //# sourceMappingURL=LoginScreen.js.map

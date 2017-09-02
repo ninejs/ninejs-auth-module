@@ -1,17 +1,19 @@
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", "ninejs/css!./LoginScreen.css", "ninejs/nineplate!./LoginScreen.html", 'ninejs/ui/Skin', 'ninejs/ui/utils/setClass', 'ninejs/core/deferredUtils', 'ninejs/core/on', 'ninejs/ui/bootstrap/bootstrap'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "ninejs/css!./LoginScreen.css", "ninejs/nineplate!./LoginScreen.html", "ninejs/ui/Skin", "ninejs/ui/utils/setClass", "ninejs/core/deferredUtils", "ninejs/core/on", "ninejs/ui/bootstrap/bootstrap"], factory);
     }
 })(function (require, exports) {
     'use strict';
-    var Skin_1 = require('ninejs/ui/Skin');
-    var setClass_1 = require('ninejs/ui/utils/setClass');
-    var deferredUtils_1 = require('ninejs/core/deferredUtils');
-    var on_1 = require('ninejs/core/on');
-    var bootstrap_1 = require('ninejs/ui/bootstrap/bootstrap');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Skin_1 = require("ninejs/ui/Skin");
+    var setClass_1 = require("ninejs/ui/utils/setClass");
+    var deferredUtils_1 = require("ninejs/core/deferredUtils");
+    var on_1 = require("ninejs/core/on");
+    var bootstrap_1 = require("ninejs/ui/bootstrap/bootstrap");
     var css = require('ninejs/css!./LoginScreen.css');
     var template = require('ninejs/nineplate!./LoginScreen.html');
     var validateInput = function (isValid) {
@@ -62,7 +64,6 @@
         }
         validateInput.call(this, !message);
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = new Skin_1.default({
         cssList: [css],
         template: template,
